@@ -28,12 +28,22 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed) {
 		StartLocation,
 		HitLocation,
 		LaunchSpeed,
+		false,
+		0,
+		0,
 		ESuggestProjVelocityTraceOption::DoNotTrace);
 	if (bHaveAimSolution) {
 		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
 		auto TankName = GetOwner()->GetName();
-		//UE_LOG(LogTemp, Warning, TEXT("%s aiming at %s"), *TankName, *AimDirection.ToString());
 		MoveBarrelTowards(AimDirection);
+		float Time = GetWorld()->GetTimeSeconds();
+		UE_LOG(LogTemp, Warning, TEXT("%f: %s aim solution found for target point: %s with aim direction: %s"), Time, *TankName, *HitLocation.ToString(), *AimDirection.ToString());
+	}
+	else {
+		float Time = GetWorld()->GetTimeSeconds();
+		auto TankName = GetOwner()->GetName();
+		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
+		UE_LOG(LogTemp, Warning, TEXT("%f: %s no aim solution found for target point: %s with aim direction: %s"), Time, *TankName, *HitLocation.ToString(), *AimDirection.ToString());
 	}
 
 }
@@ -48,6 +58,6 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection) {
 	auto AimAsRotator = AimDirection.Rotation();
 	auto DeltaRotator = AimAsRotator - BarrelRotator;
 
-	Barrel->ElevateBarrel(5.f); // TODO remove magic number
+	Barrel->ElevateBarrel(DeltaRotator.Pitch); // TODO remove magic number
 }
 
