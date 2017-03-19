@@ -33,7 +33,6 @@ void ATankPlayerController::AimTowardCrosshair() {
 	FVector HitLocation; // Out Parameter
 	if (GetSightRayHitLocation(HitLocation)) {
 		GetControlledTank()->AimAt(HitLocation);
-		
 	}
 	// Get World location of linetrace through cross hair
 	// If it hits the landscape
