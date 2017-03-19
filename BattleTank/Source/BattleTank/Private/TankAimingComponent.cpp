@@ -34,6 +34,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed) {
 		0,
 		ESuggestProjVelocityTraceOption::DoNotTrace);
 	if (bHaveAimSolution) {
+		//UE_LOG(LogTemp, Warning, TEXT("Target location: %s within range"), *HitLocation.ToString());
 		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
 		/*auto TankName = GetOwner()->GetName();
 		float Time = GetWorld()->GetTimeSeconds();

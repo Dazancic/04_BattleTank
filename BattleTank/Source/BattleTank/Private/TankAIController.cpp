@@ -27,7 +27,7 @@ void ATankAIController::Tick(float DeltaTime) {
 		
 		ControlledTank->AimAt(PlayerTank->GetActorLocation());
 		// Fire when ready
-		ControlledTank->Fire(); // TODO limit firing rate
+		ControlledTank->Fire();
 	}
 	else {
 		auto PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
