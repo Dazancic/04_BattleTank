@@ -2,12 +2,11 @@
 
 #pragma once
 
-
-
 #include "AIController.h"
 #include "TankAIController.generated.h"
 
 class ATank;
+
 /**
  * 
  */
@@ -16,12 +15,11 @@ class BATTLETANK_API ATankAIController : public AAIController
 {
 	GENERATED_BODY()
 	
-public:
-
-	void BeginPlay() override;
-	void Tick(float DeltaTime) override;
-
 private:
-	ATank* PlayerTank = nullptr;
-	ATank* ControlledTank = nullptr;
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaSeconds) override;
+	
+	// How close can the AI tank get
+	float AcceptanceRadius = 3000;
 };
