@@ -18,6 +18,25 @@ UTankAimingComponent::UTankAimingComponent()
 	// ...
 }
 
+void UTankAimingComponent::BeginPlay() {
+	LastFireTime = FPlatformTime::Seconds();
+}
+
+void UTankAimingComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) {
+
+	if ((FPlatformTime::Seconds() - LastFireTime) < ReloadTimeInSeconds) {
+		FiringStatus = EFiringState::Reloading;
+	}
+	else if (IsBarrelMoving()) {
+		
+		FiringStatus = EFiringState::Aiming;
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Barrel still"));
+		FiringStatus = EFiringState::Locked;
+	}
+}
+
 
 void UTankAimingComponent::AimAt(FVector HitLocation) {
 	if (!ensure(Barrel)) { return; }
@@ -36,7 +55,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation) {
 		ESuggestProjVelocityTraceOption::DoNotTrace);
 	if (bHaveAimSolution) {
 		//UE_LOG(LogTemp, Warning, TEXT("Target location: %s within range"), *HitLocation.ToString());
-		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
+		AimDirection = OutLaunchVelocity.GetSafeNormal();
 		/*auto TankName = GetOwner()->GetName();
 		float Time = GetWorld()->GetTimeSeconds();
 		UE_LOG(LogTemp, Warning, TEXT("%f: %s aim solution found for target point: %s with aim direction: %s"), Time, *TankName, *HitLocation.ToString(), *AimDirection.ToString());*/
@@ -70,10 +89,15 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection) {
 	Turret->Yaw(DeltaRotator.Yaw);
 }
 
+bool UTankAimingComponent::IsBarrelMoving()
+{
+	if (!ensure(Barrel)) { return false; }
+	return !(AimDirection.Equals(Barrel->GetForwardVector(), 0.01));
+}
+
 void UTankAimingComponent::Fire() {
 	if (!ensure(Barrel && ProjectileBlueprint)) { return; }
-	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
-	if (isReloaded) {
+	if (FiringStatus != EFiringState::Reloading) {
 		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
 			ProjectileBlueprint,
 			Barrel->GetSocketLocation(FName("Projectile")),
