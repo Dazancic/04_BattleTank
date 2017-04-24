@@ -18,12 +18,18 @@ public:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Movement")
-		float AcceptanceRadius = 3000;
+	float AcceptanceRadius = 3000;
+
+	UFUNCTION()
+	void OnTankDeath();
 
 private:
 	virtual void BeginPlay() override;
 
+	virtual void SetPawn(APawn* InPawn) override;
+
 	virtual void Tick(float DeltaSeconds) override;
-	// How close can the AI tank get
+	
+
 	
 };

@@ -21,12 +21,15 @@ public:
 	void BeginPlay() override;
 	void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void OnTankDeath();
+
 protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Setup")
 	void FoundAimingComponent(UTankAimingComponent* AimCompRef);
 
 private:
-	
+	virtual void SetPawn(APawn* InPawn) override;
 	void AimTowardCrosshair();
 	bool GetSightRayHitLocation(FVector& HitLocation) const;
 	bool GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const;
